@@ -1,22 +1,40 @@
 group "default" {
-  targets = ["helm"]
+  targets = ["base", "helm"]
 }
 
 variable "REGISTRY" {
-    default = "ghcr.io/victorposada/imgs/"
+    default = "ghcr.io/victorposada/imgs"
+}
+
+variable "ALPINE_VERSIONS" {
+    default = ["3.20", "3.19"]
+}
+
+variable "HELM_PACKAGES" {
+    default = "helm "
+}
+
+target "base" {
+    name = "base-alpine-${replace(alpine, ".", "")}"
+    matrix = {
+        alpine = ALPINE_VERSIONS
+    }
+    dockerfile = "./base/Dockerfile"
+    tags = ["${REGISTRY}/base/alpine:${alpine}"]
 }
 
 target "helm" {
-  dockerfile = "Dockerfile.webapp"
-  tags = ["docker.io/username/webapp"]
+    name = "helm-alpine-${replace(alpine, ".", "")}"
+    matrix = {
+        alpine = ALPINE_VERSIONS
+    }
+    contexts = {
+        base = "docker-image://alpine:${alpine}"
+    }
+    args = {
+        packages = "${HELM_PACKAGES}"
+    }
+    dockerfile = "./helm/Dockerfile"
+    tags = ["${REGISTRY}/helm/helm-alpine:${alpine}"]
 }
 
-target "webapp-release" {
-  inherits = ["webapp-dev"]
-  platforms = ["linux/amd64", "linux/arm64"]
-}
-
-target "db" {
-  dockerfile = "Dockerfile.db"
-  tags = ["docker.io/username/db"]
-}
