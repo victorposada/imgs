@@ -1,8 +1,6 @@
-ARG HELM_PACKAGES="\
-curl \
-"
-
 FROM base
+
+ARG HELM_PACKAGES="helm"
 
 LABEL org.opencontainers.image.source=https://github.com/victorposada/imgs
 

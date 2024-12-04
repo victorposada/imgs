@@ -7,11 +7,11 @@ variable "REGISTRY" {
 }
 
 variable "ALPINE_VERSIONS" {
-    default = ["3.20", "3.19"]
+    default = ["3.20", "3.19", "3.18"]
 }
 
 variable "HELM_PACKAGES" {
-    default = "helm "
+    default = "helm curl"
 }
 
 target "base" {
